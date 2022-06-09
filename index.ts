@@ -6,6 +6,7 @@ const CHANNEL_ID = process.env.REMINDER_CHANNEL_ID as Snowflake
 const TRIGGER_MESSAGE = process.env.TRIGGER_MESSAGE as string
 const REMINDER_TO_MENTION_ID = process.env.REMINDER_TO_MENTION_ID as Snowflake
 const MESSAGE_LINE = process.env.MESSAGE_LINE as string
+const MESSAGE_REPLY = process.env.MESSAGE_REPLY as string
 const REACT_EMOJI = process.env.REACT_EMOJI as string
 
 
@@ -34,6 +35,7 @@ client.on('messageCreate', (message) => {
 
     // check if it's a reply to another message
     let repliedMessage = null
+    let additionalMessage = MESSAGE_LINE
     if (message.reference !== null) {
         let repliedMessageId = message.reference.messageId as string
         let repliedChannelId = message.reference.channelId as string
@@ -42,6 +44,7 @@ client.on('messageCreate', (message) => {
         // if replied message's author is the target person
         let repliedChannel = client.guilds.cache.get(repliedGuildId)?.channels.cache.get(repliedChannelId) as TextChannel
         repliedMessage = repliedChannel.messages.cache.get(repliedMessageId) as Message
+        additionalMessage = MESSAGE_REPLY
     }
 
     if (
@@ -49,12 +52,12 @@ client.on('messageCreate', (message) => {
         checkMessage(message) || 
         // or repliedMessage is from the target or repliedMessage contains the condition
         (repliedMessage != null && (repliedMessage.author.id === REMINDER_TO_MENTION_ID || checkMessage(repliedMessage)))) {
+        
         let author = message.author;
         let username = author.username
         let avatorDisplayUrl = author.displayAvatarURL({ dynamic: true})
         let link = message.url;
         let channel = client.channels.cache.get(CHANNEL_ID) as TextChannel
-
 
         const exampleEmbed = new MessageEmbed()
             .setColor('#674cf5')
@@ -68,10 +71,15 @@ client.on('messageCreate', (message) => {
             .setDescription(message.content)
             .setTimestamp()
         
+        // attach replied message
+        if (repliedMessage != null) {
+            exampleEmbed.addField('Original Message', repliedMessage.content, true)
+        }
+        
         try {
             channel.send(
                 { 
-                    content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${MESSAGE_LINE}`,
+                    content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${additionalMessage}`,
                     embeds: [exampleEmbed] 
                 }
             );
