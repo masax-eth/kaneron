@@ -95,8 +95,7 @@ client.on('messageCreate', (message) => {
             }
         }
     } catch (error) {
-        console.log(new Date());
-        console.error('Catched error:'+error)
+        console.error(new Date()+' : Catched error :'+error)
     }
 })
 
