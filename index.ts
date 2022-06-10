@@ -42,9 +42,14 @@ client.on('messageCreate', (message) => {
         let repliedGuildId = message.reference.guildId as string
 
         // if replied message's author is the target person
-        let repliedChannel = client.guilds.cache.get(repliedGuildId)?.channels.cache.get(repliedChannelId) as TextChannel
-        repliedMessage = repliedChannel.messages.cache.get(repliedMessageId) as Message
-        additionalMessage = MESSAGE_REPLY
+        try {
+            let repliedChannel = client.guilds.cache.get(repliedGuildId)?.channels.cache.get(repliedChannelId) as TextChannel
+            repliedMessage = repliedChannel.messages.cache.get(repliedMessageId) as Message
+            additionalMessage = MESSAGE_REPLY
+    
+        } catch (error) {
+            console.error('Catched error:'+error)
+        }
     }
 
     if (
