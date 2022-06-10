@@ -24,74 +24,79 @@ client.on('ready', () => {
 })
 
 client.on('messageCreate', (message) => {
+    try {
 
-    // if it's from a bot
-    if (message.author.bot) return
+        // if it's from a bot
+        if (message.author.bot) return
 
-    // If it's from the target person
-    if (message.author.id === REMINDER_TO_MENTION_ID) {
-        return
-    }
-
-    // check if it's a reply to another message
-    let repliedMessage = null
-    let additionalMessage = MESSAGE_LINE
-    if (message.reference !== null) {
-        let repliedMessageId = message.reference.messageId as string
-        let repliedChannelId = message.reference.channelId as string
-        let repliedGuildId = message.reference.guildId as string
-
-        // if replied message's author is the target person
-        try {
-            let repliedChannel = client.guilds.cache.get(repliedGuildId)?.channels.cache.get(repliedChannelId) as TextChannel
-            repliedMessage = repliedChannel.messages.cache.get(repliedMessageId) as Message
-            additionalMessage = MESSAGE_REPLY
-    
-        } catch (error) {
-            console.error('Catched error:'+error)
+        // If it's from the target person
+        if (message.author.id === REMINDER_TO_MENTION_ID) {
+            return
         }
-    }
 
-    if (
-        // only when mentioned or includes texts
-        checkMessage(message) || 
-        // or repliedMessage is from the target or repliedMessage contains the condition
-        (repliedMessage != null && (repliedMessage.author.id === REMINDER_TO_MENTION_ID || checkMessage(repliedMessage)))) {
-        
-        let author = message.author;
-        let username = author.username
-        let avatorDisplayUrl = author.displayAvatarURL({ dynamic: true})
-        let link = message.url;
-        let channel = client.channels.cache.get(CHANNEL_ID) as TextChannel
+        // check if it's a reply to another message
+        let repliedMessage = null
+        let additionalMessage = MESSAGE_LINE
+        if (message.reference !== null) {
+            let repliedMessageId = message.reference.messageId as string
+            let repliedChannelId = message.reference.channelId as string
+            let repliedGuildId = message.reference.guildId as string
 
-        const exampleEmbed = new MessageEmbed()
-            .setColor('#674cf5')
-            .setTitle('メッセージ')
-            .setURL(link)
-            .setAuthor({
-                name: username, 
-                iconURL: avatorDisplayUrl, 
-                url: link
-            })
-            .setDescription(message.content)
-            .setTimestamp()
+            // if replied message's author is the target person
+            try {
+                let repliedChannel = client.guilds.cache.get(repliedGuildId)?.channels.cache.get(repliedChannelId) as TextChannel
+                repliedMessage = repliedChannel.messages.cache.get(repliedMessageId) as Message
+                additionalMessage = MESSAGE_REPLY
         
-        // attach replied message
-        if (repliedMessage != null) {
-            exampleEmbed.addField('Original Message', repliedMessage.content, true)
+            } catch (error) {
+                console.error('Catched error:'+error)
+            }
         }
-        
-        try {
-            channel.send(
-                { 
-                    content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${additionalMessage}`,
-                    embeds: [exampleEmbed] 
-                }
-            );
-        } finally {
-            // react with emoji when the message is sent successfuly
-            message.react(REACT_EMOJI)
+
+        if (
+            // only when mentioned or includes texts
+            checkMessage(message) || 
+            // or repliedMessage is from the target or repliedMessage contains the condition
+            (repliedMessage != null && (repliedMessage.author.id === REMINDER_TO_MENTION_ID || checkMessage(repliedMessage)))) {
+            
+            let author = message.author;
+            let username = author.username
+            let avatorDisplayUrl = author.displayAvatarURL({ dynamic: true})
+            let link = message.url;
+            let channel = client.channels.cache.get(CHANNEL_ID) as TextChannel
+
+            const exampleEmbed = new MessageEmbed()
+                .setColor('#674cf5')
+                .setTitle('メッセージ')
+                .setURL(link)
+                .setAuthor({
+                    name: username, 
+                    iconURL: avatorDisplayUrl, 
+                    url: link
+                })
+                .setDescription(message.content)
+                .setTimestamp()
+            
+            // attach replied message
+            if (repliedMessage != null) {
+                exampleEmbed.addField('Original Message', repliedMessage.content, true)
+            }
+            
+            try {
+                channel.send(
+                    { 
+                        content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${additionalMessage}`,
+                        embeds: [exampleEmbed] 
+                    }
+                );
+            } finally {
+                // react with emoji when the message is sent successfuly
+                message.react(REACT_EMOJI)
+            }
         }
+    } catch (error) {
+        console.log(new Date());
+        console.error('Catched error:'+error)
     }
 })
 
