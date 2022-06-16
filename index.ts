@@ -49,7 +49,7 @@ client.on('messageCreate', (message) => {
                 additionalMessage = MESSAGE_REPLY
         
             } catch (error) {
-                console.error('['+new Date()+'] Catched error:'+error)
+                console.error('['+new Date()+'] Catched error when getting replied message :'+error)
             }
         }
 
@@ -94,13 +94,15 @@ client.on('messageCreate', (message) => {
                         embeds: [exampleEmbed] 
                     }
                 );
+            } catch (error) {
+                console.error('['+new Date()+'] Catched error when sending message :'+error)
             } finally {
                 // react with emoji when the message is sent successfuly
                 message.react(REACT_EMOJI)
             }
         }
     } catch (error) {
-        console.error('['+new Date()+'] Catched error :'+error)
+        console.error('['+new Date()+'] Catched error at somewhere :'+error)
     }
 })
 
