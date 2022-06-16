@@ -20,7 +20,7 @@ const client = new DiscordJS.Client({
 })
 
 client.on('ready', () => {
-    console.log('The bot is ready')
+    console.log('['+new Date()+'] The bot is ready')
 })
 
 client.on('messageCreate', (message) => {
@@ -49,7 +49,7 @@ client.on('messageCreate', (message) => {
                 additionalMessage = MESSAGE_REPLY
         
             } catch (error) {
-                console.error('Catched error:'+error)
+                console.error('['+new Date()+'] Catched error:'+error)
             }
         }
 
@@ -83,9 +83,14 @@ client.on('messageCreate', (message) => {
             }
             
             try {
+                let messageChannel = message.channelId
+                let channelText = ''
+                if (messageChannel !== null) {
+                    channelText = '<#'+messageChannel+'>'
+                }
                 channel.send(
                     { 
-                        content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${additionalMessage}`,
+                        content: `<@${REMINDER_TO_MENTION_ID}> ${username} ${additionalMessage}. \n Channel : `+channelText,
                         embeds: [exampleEmbed] 
                     }
                 );
@@ -95,7 +100,7 @@ client.on('messageCreate', (message) => {
             }
         }
     } catch (error) {
-        console.error(new Date()+' : Catched error :'+error)
+        console.error('['+new Date()+'] Catched error :'+error)
     }
 })
 
