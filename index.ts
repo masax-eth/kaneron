@@ -79,8 +79,8 @@ client.on('messageCreate', (message) => {
             
             // attach replied message
             if (repliedMessage != null) {
-                let repliedAuthorId = repliedMessage.author.id
-                exampleEmbed.addField(`Original Message from <@${repliedAuthorId}>`, repliedMessage.content, true)
+                let repliedAuthor = repliedMessage.author.username
+                exampleEmbed.addField(`Original Message from ${repliedAuthor}`, repliedMessage.content, true)
             }
             
             try {
