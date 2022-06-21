@@ -80,7 +80,13 @@ client.on('messageCreate', (message) => {
             // attach replied message
             if (repliedMessage != null) {
                 let repliedAuthor = repliedMessage.author.username
-                exampleEmbed.addField(`Original Message from ${repliedAuthor}`, repliedMessage.content, true)
+                let repliedContent = repliedMessage.content
+                console.log("repliedContent.length:"+repliedContent.length)
+                if (repliedContent !== null && repliedContent.length > 512) {
+                    repliedContent = repliedContent.substring(0, 512)
+                    repliedContent = repliedContent + '...'
+                }
+                exampleEmbed.addField(`Original Message from ${repliedAuthor}`, repliedContent, true)
             }
             
             try {
