@@ -33,7 +33,14 @@ client.on('messageCreate', (message) => {
         if (message.author.id === REMINDER_TO_MENTION_ID) {
             return
         }
-
+        
+        // for debug
+        if (message !== null && message !== undefined) {
+            console.log('['+new Date()+'] Message ID : '+ message.id+' by '+message.author.username + '['+ message.content.substring(0, 30)+']')
+        } else {
+            console.log('['+new Date()+'] message is null or undefined')
+        }
+        
         // check if it's a reply to another message
         let repliedMessage = null
         let additionalMessage = MESSAGE_LINE
@@ -81,7 +88,7 @@ client.on('messageCreate', (message) => {
             if (repliedMessage != null) {
                 let repliedAuthor = repliedMessage.author.username
                 let repliedContent = repliedMessage.content
-                console.log("repliedContent.length:"+repliedContent.length)
+                // console.log("repliedContent.length:"+repliedContent.length)
                 if (repliedContent !== null && repliedContent.length > 512) {
                     repliedContent = repliedContent.substring(0, 512)
                     repliedContent = repliedContent + '...'
@@ -101,11 +108,9 @@ client.on('messageCreate', (message) => {
                         embeds: [exampleEmbed] 
                     }
                 );
+                message.react(REACT_EMOJI)
             } catch (error) {
                 console.error('['+new Date()+'] Catched error when sending message :'+error)
-            } finally {
-                // react with emoji when the message is sent successfuly
-                message.react(REACT_EMOJI)
             }
         }
     } catch (error) {
